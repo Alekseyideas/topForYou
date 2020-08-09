@@ -13,6 +13,7 @@
 		"graphql": "^15.3.0",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
+		"react-router-dom": "^5.2.0",
 		"react-scripts": "3.4.1",
 		"typescript": "~3.7.2"
 	},
@@ -40,6 +41,7 @@
 	"devDependencies": {
 		"@types/react": "^16.9.44",
 		"@types/react-dom": "^16.9.8",
+		"@types/react-router-dom": "^5.1.5",
 		"@typescript-eslint/eslint-plugin": "^3.7.1",
 		"eslint": "^7.6.0",
 		"eslint-config-airbnb-typescript": "^9.0.0",
