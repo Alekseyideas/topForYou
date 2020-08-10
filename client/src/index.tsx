@@ -1,12 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {
-	ApolloClient,
-	InMemoryCache,
-	gql,
-	ApolloProvider,
-} from '@apollo/client';
+import { BrowserRouter } from 'react-router-dom';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
@@ -33,7 +29,9 @@ const client = new ApolloClient({
 ReactDOM.render(
 	<React.StrictMode>
 		<ApolloProvider client={client}>
-			<App />
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
 		</ApolloProvider>
 	</React.StrictMode>,
 	document.getElementById('root')

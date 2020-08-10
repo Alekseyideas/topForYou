@@ -4,6 +4,8 @@
 	"private": true,
 	"dependencies": {
 		"@apollo/client": "^3.1.2",
+		"@apollo/react-common": "^3.1.4",
+		"@apollo/react-hooks": "^4.0.0",
 		"@material-ui/core": "^4.11.0",
 		"@testing-library/jest-dom": "^4.2.4",
 		"@testing-library/react": "^9.3.2",
@@ -13,6 +15,7 @@
 		"graphql": "^15.3.0",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
+		"react-router-dom": "^5.2.0",
 		"react-scripts": "3.4.1",
 		"typescript": "~3.7.2"
 	},
@@ -20,7 +23,8 @@
 		"start": "PORT=3015 react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"gen": "graphql-codegen"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
@@ -38,8 +42,13 @@
 		]
 	},
 	"devDependencies": {
+		"@graphql-codegen/cli": "1.17.7",
+		"@graphql-codegen/typescript": "^1.17.7",
+		"@graphql-codegen/typescript-operations": "^1.17.7",
+		"@graphql-codegen/typescript-react-apollo": "1.17.7",
 		"@types/react": "^16.9.44",
 		"@types/react-dom": "^16.9.8",
+		"@types/react-router-dom": "^5.1.5",
 		"@typescript-eslint/eslint-plugin": "^3.7.1",
 		"eslint": "^7.6.0",
 		"eslint-config-airbnb-typescript": "^9.0.0",
