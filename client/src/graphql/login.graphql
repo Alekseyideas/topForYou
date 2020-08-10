@@ -1,0 +1,10 @@
+input UserLoginInput {
+	email: String!
+	password: String!
+}
+mutation login($options: UserLoginInput!) {
+	login(options: $options) {
+		accessToken
+		refreshToken
+	}
+}
