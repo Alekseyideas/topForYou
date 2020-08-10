@@ -6,6 +6,7 @@ import {
   Arg,
   Field,
   ObjectType,
+  UseMiddleware,
 } from 'type-graphql';
 import { User, UserInput, UserLoginInput } from '../models/User';
 import validator from 'validator';
@@ -18,6 +19,7 @@ import {
   createAccessToken,
   createRefreshToken,
 } from '../utils/token';
+import { isAuth } from '../utils/isAuth';
 
 @ObjectType()
 class LoginResponse {
@@ -35,6 +37,7 @@ export class UserResolver {
   }
 
   @Query(() => [User])
+  @UseMiddleware(isAuth)
   async users() {
     try {
       const users = await User.findAll();
@@ -45,6 +48,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseMiddleware(isAuth)
   async user(@Arg('id') id: number) {
     try {
       const user = await User.findByPk(id);
@@ -55,6 +59,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseMiddleware(isAuth)
   async createUser(@Arg('options', () => UserInput) options: UserInput) {
     try {
       if (!options.firstName.length) throw Error('First name is required');
@@ -95,7 +100,6 @@ export class UserResolver {
       if (!isPasswordCorrect) {
         return throwError('Incorrect password', 403);
       }
-      console.log(user, 'user');
       sendRefreshToken(res, user);
       return {
         accessToken: createAccessToken(user),

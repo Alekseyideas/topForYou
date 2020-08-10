@@ -1,6 +1,7 @@
 import React from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import { Button, Container } from '@material-ui/core';
+import { useGetUsersQuery } from '../generated/graphql';
 
 const GET_USERS = gql`
 	{
@@ -14,24 +15,40 @@ const GET_USERS = gql`
 	}
 `;
 export const Home = () => {
-	const [getUsers, { loading, error, data, refetch }] = useLazyQuery(GET_USERS);
+	// const [getUsers, { loading, error, data, refetch }] = useLazyQuery(GET_USERS);
+	const {
+		data: usersData,
+		error: usersError,
+		loading: usersLoading,
+	} = useGetUsersQuery({ fetchPolicy: 'network-only' });
 
-	let htmlBody = <p />;
-	if (loading) htmlBody = <p>Loading...</p>;
-	if (error) htmlBody = <p>Error :(</p>;
-	if (data && data.users && data.users[0]) {
-		htmlBody = (
-			<ul>
-				{data.users.map((user: any) => {
-					return (
-						<li key={user.id}>
-							{user.id}: {user.firstName}
-						</li>
-					);
-				})}
-			</ul>
-		);
+	let htmlUsers = <p />;
+	if (usersLoading) {
+		htmlUsers = <p>Loading...</p>;
 	}
+	if (usersError) {
+		htmlUsers = <p>{JSON.stringify(usersError)}</p>;
+	}
+	if (usersData) {
+		htmlUsers = <p>{JSON.stringify(usersData)}</p>;
+	}
+	// let htmlBody = <p />;
+	// if (loading) htmlBody = <p>Loading...</p>;
+	// if (error) htmlBody = <p>Error :(</p>;
+
+	// if (data && data.users && data.users[0]) {
+	// 	htmlBody = (
+	// 		<ul>
+	// 			{data.users.map((user: any) => {
+	// 				return (
+	// 					<li key={user.id}>
+	// 						{user.id}: {user.firstName}
+	// 					</li>
+	// 				);
+	// 			})}
+	// 		</ul>
+	// 	);
+	// }
 
 	return (
 		<Container>
@@ -40,13 +57,13 @@ export const Home = () => {
 				variant="contained"
 				color="primary"
 				onClick={() => {
-					if (refetch) {
-						console.log('refetch users');
-						refetch();
-					} else {
-						console.log('get users');
-						getUsers();
-					}
+					// if (refetch) {
+					// 	console.log('refetch users');
+					// 	refetch();
+					// } else {
+					// 	console.log('get users');
+					// 	getUsers();
+					// }
 				}}
 			>
 				Primary
@@ -77,7 +94,7 @@ export const Home = () => {
 			<br />
 			<br />
 			<br />
-			{htmlBody}
+			{htmlUsers}
 		</Container>
 	);
 };
