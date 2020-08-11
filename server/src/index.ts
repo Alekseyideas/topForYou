@@ -14,6 +14,7 @@ const app: Application = express();
     cors({
       origin: 'http://localhost:3015',
       optionsSuccessStatus: 200,
+      credentials: true,
     })
   );
   app.use(router);

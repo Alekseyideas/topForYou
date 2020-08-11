@@ -2,36 +2,47 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter } from 'react-router-dom';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import {
+	ApolloClient,
+	InMemoryCache,
+	ApolloProvider,
+	ApolloLink,
+	HttpLink,
+} from '@apollo/client';
+import {
+	unstable_createMuiStrictModeTheme,
+	ThemeProvider,
+} from '@material-ui/core/styles';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { TokenRefresh } from './utils/TokenRefreshLink';
+import { AuthLink } from './utils/AuthLink';
+
+const theme = unstable_createMuiStrictModeTheme({
+	palette: {
+		type: 'dark',
+	},
+});
+console.log('theme: ', theme);
+
+const httpLink = new HttpLink({
+	uri: 'http://localhost:3200/graphql',
+	credentials: 'include',
+});
 
 const client = new ApolloClient({
-	uri: 'http://localhost:3200/graphql',
+	link: ApolloLink.from([TokenRefresh, AuthLink, httpLink]),
 	cache: new InMemoryCache(),
 });
 
-// client
-// 	.query({
-// 		query: gql`
-// 			query getUsers {
-// 				users {
-// 					id
-// 					firstName
-// 					lastName
-// 					password
-// 					role
-// 				}
-// 			}
-// 		`,
-// 	})
-// 	.then((result) => console.log(result));
 ReactDOM.render(
 	<React.StrictMode>
 		<ApolloProvider client={client}>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
+			<ThemeProvider theme={theme}>
+				<BrowserRouter>
+					<App />
+				</BrowserRouter>
+			</ThemeProvider>
 		</ApolloProvider>
 	</React.StrictMode>,
 	document.getElementById('root')

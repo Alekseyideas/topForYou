@@ -17,4 +17,7 @@ export const sendRefreshToken = (res: Response, user: User) => {
   res.cookie('jid', createRefreshToken(user), {
     httpOnly: true,
   });
+  // res.cookie('jid', createRefreshToken(user), {
+  //   httpOnly: true,
+  // });
 };

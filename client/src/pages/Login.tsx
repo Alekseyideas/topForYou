@@ -1,26 +1,28 @@
 import React from 'react';
 import { Grid, Container, Box, TextField, Button } from '@material-ui/core';
+import { RouteComponentProps } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
 import { useLoginMutation } from '../generated/graphql';
+import { setAccessToken } from '../utils/accessToken';
 
 const field1 = 'email';
 const field2 = 'pass';
 
-export const Login = () => {
+export const Login: React.FC<RouteComponentProps> = ({ history }) => {
 	const [login] = useLoginMutation();
 	const { form, onChangeHandler } = useForm({
 		[field1]: {
-			value: '',
+			value: 'annitasunbeam@gmail.com',
 		},
 		[field2]: {
-			value: '',
+			value: '09071993',
 		},
 	});
 	const loginHandler = async (e: React.FormEvent) => {
 		e.preventDefault();
 		const email = form[field1].value;
 		const pass = form[field2].value;
-		const log = await login({
+		const resp = await login({
 			variables: {
 				options: {
 					email,
@@ -28,7 +30,10 @@ export const Login = () => {
 				},
 			},
 		});
-		console.log(log);
+		if (resp && resp.data) {
+			setAccessToken(resp.data.login.accessToken);
+			history.push('/home');
+		}
 	};
 	return (
 		<Container>
