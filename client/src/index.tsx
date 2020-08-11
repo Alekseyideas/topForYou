@@ -9,10 +9,21 @@ import {
 	ApolloLink,
 	HttpLink,
 } from '@apollo/client';
+import {
+	unstable_createMuiStrictModeTheme,
+	ThemeProvider,
+} from '@material-ui/core/styles';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { TokenRefresh } from './utils/TokenRefreshLink';
 import { AuthLink } from './utils/AuthLink';
+
+const theme = unstable_createMuiStrictModeTheme({
+	palette: {
+		type: 'dark',
+	},
+});
+console.log('theme: ', theme);
 
 const httpLink = new HttpLink({
 	uri: 'http://localhost:3200/graphql',
@@ -27,9 +38,11 @@ const client = new ApolloClient({
 ReactDOM.render(
 	<React.StrictMode>
 		<ApolloProvider client={client}>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
+			<ThemeProvider theme={theme}>
+				<BrowserRouter>
+					<App />
+				</BrowserRouter>
+			</ThemeProvider>
 		</ApolloProvider>
 	</React.StrictMode>,
 	document.getElementById('root')

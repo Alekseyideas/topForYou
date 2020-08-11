@@ -1,23 +1,23 @@
 import React from 'react';
-import { Button, Container } from '@material-ui/core';
-import { useGetUsersLazyQuery } from '../generated/graphql';
+// import { useGetUsersLazyQuery } from '../generated/graphql';
+import { NavPanel } from '../components';
 
 export const Home = () => {
-	const [
-		getUsers,
-		{ data: usersData, error: usersError, loading: usersLoading },
-	] = useGetUsersLazyQuery({ fetchPolicy: 'network-only' });
+	// const [
+	// 	getUsers,
+	// 	{ data: usersData, error: usersError, loading: usersLoading },
+	// ] = useGetUsersLazyQuery({ fetchPolicy: 'network-only' });
 
-	let htmlUsers = <p />;
-	if (usersLoading) {
-		htmlUsers = <p>Loading...</p>;
-	}
-	if (usersError) {
-		htmlUsers = <p>{JSON.stringify(usersError)}</p>;
-	}
-	if (usersData) {
-		htmlUsers = <p>{JSON.stringify(usersData)}</p>;
-	}
+	// let htmlUsers = <p />;
+	// if (usersLoading) {
+	// 	htmlUsers = <p>Loading...</p>;
+	// }
+	// if (usersError) {
+	// 	htmlUsers = <p>{JSON.stringify(usersError)}</p>;
+	// }
+	// if (usersData) {
+	// 	htmlUsers = <p>{JSON.stringify(usersData)}</p>;
+	// }
 	// let htmlBody = <p />;
 	// if (loading) htmlBody = <p>Loading...</p>;
 	// if (error) htmlBody = <p>Error :(</p>;
@@ -37,38 +37,41 @@ export const Home = () => {
 	// }
 
 	return (
-		<Container>
-			<Button variant="contained">Default</Button>
-			<Button variant="contained" color="primary" onClick={() => getUsers()}>
-				Primary
-			</Button>
-			<Button
-				variant="contained"
-				color="secondary"
-				onClick={() => {
-					// login({
-					// 	variables: {
-					// 		options: {
-					// 			password: '09071993',
-					// 			email: 'annitasunbeam@gmail.com',
-					// 		},
-					// 	},
-					// });
-				}}
-			>
-				Secondary
-			</Button>
-			<Button variant="contained" disabled>
-				Disabled
-			</Button>
-			<Button variant="contained" color="primary" href="#contained-buttons">
-				Link
-			</Button>
-			<br />
-			<br />
-			<br />
-			<br />
-			{htmlUsers}
-		</Container>
+		<>
+			<NavPanel />
+			{/* <Container>
+				<Button variant="contained">Default</Button>
+				<Button variant="contained" color="primary" onClick={() => getUsers()}>
+					Primary
+				</Button>
+				<Button
+					variant="contained"
+					color="secondary"
+					onClick={() => {
+						// login({
+						// 	variables: {
+						// 		options: {
+						// 			password: '09071993',
+						// 			email: 'annitasunbeam@gmail.com',
+						// 		},
+						// 	},
+						// });
+					}}
+				>
+					Secondary
+				</Button>
+				<Button variant="contained" disabled>
+					Disabled
+				</Button>
+				<Button variant="contained" color="primary" href="#contained-buttons">
+					Link
+				</Button>
+				<br />
+				<br />
+				<br />
+				<br />
+				{htmlUsers}
+			</Container> */}
+		</>
 	);
 };

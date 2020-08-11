@@ -4,7 +4,7 @@ import { User } from '../models/User';
 
 export function createAccessToken({ id }: User) {
   return sign({ id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: '5s',
+    expiresIn: '15m',
   });
 }
 export function createRefreshToken({ id, tokenVersion }: User) {
