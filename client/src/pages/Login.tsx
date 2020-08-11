@@ -9,7 +9,7 @@ const field1 = 'email';
 const field2 = 'pass';
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
-	const [login, data] = useLoginMutation();
+	const [login] = useLoginMutation();
 	const { form, onChangeHandler } = useForm({
 		[field1]: {
 			value: 'annitasunbeam@gmail.com',

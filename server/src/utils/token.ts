@@ -4,7 +4,7 @@ import { User } from '../models/User';
 
 export function createAccessToken({ id }: User) {
   return sign({ id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: '15m',
+    expiresIn: '5s',
   });
 }
 export function createRefreshToken({ id, tokenVersion }: User) {
@@ -17,4 +17,7 @@ export const sendRefreshToken = (res: Response, user: User) => {
   res.cookie('jid', createRefreshToken(user), {
     httpOnly: true,
   });
+  // res.cookie('jid', createRefreshToken(user), {
+  //   httpOnly: true,
+  // });
 };
