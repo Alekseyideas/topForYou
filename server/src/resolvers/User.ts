@@ -27,6 +27,8 @@ class LoginResponse {
   accessToken!: string;
   @Field()
   refreshToken!: string;
+  @Field()
+  user!: User;
 }
 
 @Resolver()
@@ -104,6 +106,7 @@ export class UserResolver {
       return {
         accessToken: createAccessToken(user),
         refreshToken: createRefreshToken(user),
+        user,
       };
     } catch (e) {
       return e;

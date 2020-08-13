@@ -6,5 +6,12 @@ mutation login($options: UserLoginInput!) {
 	login(options: $options) {
 		accessToken
 		refreshToken
+		user {
+			id
+			email
+			firstName
+			lastName
+			role
+		}
 	}
 }

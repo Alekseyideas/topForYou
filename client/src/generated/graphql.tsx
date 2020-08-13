@@ -67,6 +67,7 @@ export type LoginResponse = {
   __typename?: 'LoginResponse';
   accessToken: Scalars['String'];
   refreshToken: Scalars['String'];
+  user: User;
 };
 
 export type UserLoginInput = {
@@ -95,6 +96,10 @@ export type LoginMutation = (
   & { login: (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken' | 'refreshToken'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'role'>
+    ) }
   ) }
 );
 
@@ -140,6 +145,13 @@ export const LoginDocument = gql`
   login(options: $options) {
     accessToken
     refreshToken
+    user {
+      id
+      email
+      firstName
+      lastName
+      role
+    }
   }
 }
     `;
