@@ -2,7 +2,11 @@ import React from 'react';
 import { Grid, Container, Box, TextField, Button } from '@material-ui/core';
 import { RouteComponentProps } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
-import { useLoginMutation } from '../generated/graphql';
+import {
+	useLoginMutation,
+	UserDocument,
+	UserQuery,
+} from '../generated/graphql';
 import { setAccessToken } from '../utils/accessToken';
 
 const field1 = 'email';
@@ -29,10 +33,20 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
 					password: pass,
 				},
 			},
+			update: (store, { data }) => {
+				if (!data) return null;
+				return store.writeQuery<UserQuery>({
+					query: UserDocument,
+					data: {
+						__typename: 'Query',
+						user: data.login.user,
+					},
+				});
+			},
 		});
 		if (resp && resp.data) {
 			setAccessToken(resp.data.login.accessToken);
-			history.push('/home');
+			// history.push('/home');
 		}
 	};
 	return (

@@ -20,6 +20,8 @@ import {
   createRefreshToken,
 } from '../utils/token';
 import { isAuth } from '../utils/isAuth';
+import { MyContext } from '../utils/MyContext';
+import { verify } from 'jsonwebtoken';
 
 @ObjectType()
 class LoginResponse {
@@ -49,14 +51,22 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => User)
+  @Query(() => User, { nullable: true })
   @UseMiddleware(isAuth)
-  async user(@Arg('id') id: number) {
+  async user(@Ctx() context: MyContext) {
+    const authorization = context.req.headers['authorization'];
+
+    if (!authorization) {
+      throw new Error('not authenticated');
+    }
+
     try {
-      const user = await User.findByPk(id);
-      return user;
-    } catch (e) {
-      throw Error(e);
+      const token = authorization.split(' ')[1];
+      const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
+      return User.findByPk(payload.id);
+    } catch (err) {
+      console.log(err);
+      throw new Error('not authenticated');
     }
   }
 
