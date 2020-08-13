@@ -3,10 +3,12 @@ import './App.css';
 import { CircularProgress, Grid } from '@material-ui/core';
 import { UnAuthRoutes, AuthRoutes } from './Routes';
 import { setAccessToken } from './utils/accessToken';
+import { useUserQuery } from './generated/graphql';
 
 function App() {
-	const [loading, setLoading] = React.useState(true);
-	const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+	// const [loading, setLoading] = React.useState(true);
+	const { data: userData, loading } = useUserQuery();
+
 	React.useEffect(() => {
 		(async () => {
 			const data = await fetch('http://localhost:3200/refresh-token', {
@@ -17,12 +19,7 @@ function App() {
 			// console.log('resp: ', resp);
 			if (resp.ok) {
 				setAccessToken(resp.accessToken);
-				setIsLoggedIn(true);
-			} else {
-				setIsLoggedIn(false);
 			}
-
-			setLoading(false);
 		})();
 	}, []);
 
@@ -38,8 +35,7 @@ function App() {
 			</Grid>
 		);
 	}
-
-	if (isLoggedIn) return <AuthRoutes />;
+	if (userData) return <AuthRoutes />;
 	return <UnAuthRoutes />;
 }
 

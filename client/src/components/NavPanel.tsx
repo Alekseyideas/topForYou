@@ -8,6 +8,7 @@ import {
 	ListItemText,
 } from '@material-ui/core';
 import { NavLink } from 'react-router-dom';
+import { useUserQuery } from '../generated/graphql';
 
 const drawerWidth = 240;
 
@@ -24,7 +25,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const NavPanel: React.FC = () => {
+	const { data, loading } = useUserQuery();
 	const classes = useStyles();
+	if (loading) return null;
+	if (!data) return null;
+
 	return (
 		<nav aria-label="mailbox folders">
 			<Drawer
@@ -38,6 +43,12 @@ export const NavPanel: React.FC = () => {
 			>
 				<ListItem>
 					<ListItemText primary="TopForYou" color="#fff" />
+				</ListItem>
+				<ListItem>
+					<ListItemText
+						primary={`Hello ${data.user?.firstName}`}
+						color="#fff"
+					/>
 				</ListItem>
 
 				<ListItem button component={NavLink} to="/">
