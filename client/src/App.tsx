@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { hot } from 'react-hot-loader/root';
 import { CircularProgress, Grid } from '@material-ui/core';
 import { UnAuthRoutes, AuthRoutes } from './Routes';
 import { setAccessToken } from './utils/accessToken';
@@ -39,4 +40,4 @@ function App() {
 	return <UnAuthRoutes />;
 }
 
-export default App;
+export default hot(App);
