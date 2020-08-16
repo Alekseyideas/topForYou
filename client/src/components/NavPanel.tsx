@@ -13,6 +13,12 @@ import { useUserQuery } from '../generated/graphql';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
+	drawer: {
+		[theme.breakpoints.up('sm')]: {
+			width: drawerWidth,
+			flexShrink: 0,
+		},
+	},
 	drawerPaper: {
 		// position: 'relative',
 		whiteSpace: 'nowrap',
@@ -31,7 +37,7 @@ export const NavPanel: React.FC = () => {
 	if (!data) return null;
 
 	return (
-		<nav aria-label="mailbox folders">
+		<nav className={classes.drawer} aria-label="mailbox folders">
 			<Drawer
 				variant="persistent"
 				anchor="left"
@@ -52,12 +58,6 @@ export const NavPanel: React.FC = () => {
 				</ListItem>
 
 				<ListItem button component={NavLink} to="/">
-					<ListItemIcon>
-						<PeopleIcon />
-					</ListItemIcon>
-					<ListItemText primary="Users" />
-				</ListItem>
-				<ListItem button component={NavLink} to="/home">
 					<ListItemIcon>
 						<PeopleIcon />
 					</ListItemIcon>

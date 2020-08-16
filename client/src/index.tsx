@@ -23,7 +23,7 @@ const theme = unstable_createMuiStrictModeTheme({
 		type: 'dark',
 	},
 });
-console.log('theme: ', theme);
+// console.log('theme: ', theme);
 
 const httpLink = new HttpLink({
 	uri: 'http://localhost:3200/graphql',
