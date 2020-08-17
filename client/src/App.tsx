@@ -5,6 +5,7 @@ import { CircularProgress, Grid } from '@material-ui/core';
 import { UnAuthRoutes, AuthRoutes } from './Routes';
 import { setAccessToken } from './utils/accessToken';
 import { useUserQuery } from './generated/graphql';
+import { AppWrapper } from './AppWrapper';
 
 function App() {
 	// const [loading, setLoading] = React.useState(true);
@@ -36,7 +37,12 @@ function App() {
 			</Grid>
 		);
 	}
-	if (userData) return <AuthRoutes />;
+	if (userData)
+		return (
+			<AppWrapper>
+				<AuthRoutes />
+			</AppWrapper>
+		);
 	return <UnAuthRoutes />;
 }
 

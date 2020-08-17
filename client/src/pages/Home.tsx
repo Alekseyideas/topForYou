@@ -1,9 +1,5 @@
 import React from 'react';
 import {
-	Container,
-	makeStyles,
-	Theme,
-	createStyles,
 	Breadcrumbs,
 	Typography,
 	Grid,
@@ -16,41 +12,14 @@ import {
 	TableContainer,
 	Paper,
 } from '@material-ui/core';
-import { NavPanel } from '../components';
+import { useHistory } from 'react-router-dom';
 import { useGetUsersQuery, useUserQuery } from '../generated/graphql';
-import { getUserRole } from '../utils/helpers';
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		root: {
-			display: 'flex',
-		},
-		drawer: {
-			[theme.breakpoints.up('sm')]: {
-				flexShrink: 0,
-			},
-		},
-
-		menuButton: {
-			marginRight: theme.spacing(2),
-			[theme.breakpoints.up('sm')]: {
-				display: 'none',
-			},
-		},
-		// necessary for content to be below app bar
-		toolbar: theme.mixins.toolbar,
-		drawerPaper: {},
-		content: {
-			flexGrow: 1,
-			padding: theme.spacing(3),
-		},
-	})
-);
+import { UserRoles, IUserRoleGroup } from '../utils/helpers';
+import { routePath } from '../utils/routePath';
 
 export const Home = () => {
 	// const theme = useTheme();
-	const classes = useStyles();
-
+	const history = useHistory();
 	const {
 		data: usersData,
 		error: usersError,
@@ -99,7 +68,7 @@ export const Home = () => {
 					</TableCell>
 					<TableCell component="th" scope="row">
 						<Typography color="textPrimary">
-							{getUserRole(user.role)}{' '}
+							{UserRoles[user.role as keyof IUserRoleGroup].name}
 						</Typography>
 					</TableCell>
 				</TableRow>
@@ -107,36 +76,36 @@ export const Home = () => {
 		});
 	}
 	return (
-		<div className={classes.root}>
-			<NavPanel />
-			<Container style={{ maxWidth: 'initial', paddingTop: '20px' }}>
-				<Breadcrumbs aria-label="breadcrumb">
-					<Typography color="textPrimary">Users</Typography>
-				</Breadcrumbs>
-				<Grid
-					container
-					direction="row"
-					justify="space-between"
-					alignItems="center"
+		<>
+			<Breadcrumbs aria-label="breadcrumb">
+				<Typography color="textPrimary">Users</Typography>
+			</Breadcrumbs>
+			<Grid
+				container
+				direction="row"
+				justify="space-between"
+				alignItems="center"
+			>
+				<h1>Users</h1>
+				<Button
+					onClick={() => history.push(routePath.createUser)}
+					variant="outlined"
 				>
-					<h1>Users</h1>
-					<Button onClick={() => null} variant="outlined">
-						Create User
-					</Button>
-				</Grid>
-				<TableContainer component={Paper}>
-					<Table>
-						<TableHead>
-							<TableRow>
-								<TableCell align="left">Id</TableCell>
-								<TableCell align="left">User name</TableCell>
-								<TableCell align="left">User role</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>{tableRows}</TableBody>
-					</Table>
-				</TableContainer>
-			</Container>
-		</div>
+					Create User
+				</Button>
+			</Grid>
+			<TableContainer component={Paper}>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell align="left">Id</TableCell>
+							<TableCell align="left">User name</TableCell>
+							<TableCell align="left">User role</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>{tableRows}</TableBody>
+				</Table>
+			</TableContainer>
+		</>
 	);
 };
