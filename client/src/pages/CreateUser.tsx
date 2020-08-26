@@ -11,17 +11,23 @@ import {
 	InputLabel,
 	Select,
 	MenuItem,
+	CircularProgress,
 } from '@material-ui/core';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Redirect } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
-import { UserRoles, IUserRoleGroup } from '../utils/helpers';
+import { UserRoles } from '../utils/helpers';
+import { Loader, ErrorModal } from '../components';
+import { useCreateUserMutation } from '../generated/graphql';
+import { routePath } from '../utils/routePath';
 
 const field1 = 'name';
 const field2 = 'lastName';
 const field3 = 'pass';
 const field4 = 'email';
-const field5 = 'role';
 export const CreateUser: React.FC = () => {
+	const [createUser, { loading, error }] = useCreateUserMutation();
+	const [showModal, setShowModal] = React.useState(false);
+	const [goToUsers, setGoToUsers] = React.useState(false);
 	const { form, onChangeHandler } = useForm({
 		[field1]: {
 			value: '',
@@ -37,7 +43,13 @@ export const CreateUser: React.FC = () => {
 		},
 	});
 
+	React.useEffect(() => {
+		console.log(error, 'error');
+	}, [error]);
+
 	const [role, setRole] = React.useState(1);
+
+	if (goToUsers) return <Redirect to={routePath.home} />;
 	return (
 		<>
 			<Breadcrumbs aria-label="breadcrumb">
@@ -47,7 +59,14 @@ export const CreateUser: React.FC = () => {
 				<Typography color="textPrimary">Create User</Typography>
 			</Breadcrumbs>
 
-			<Card style={{ maxWidth: '600px', marginTop: '20px', padding: '20px' }}>
+			<Card
+				style={{
+					maxWidth: '600px',
+					marginTop: '20px',
+					padding: '20px',
+					position: 'relative',
+				}}
+			>
 				<form action="" noValidate autoComplete="off">
 					<Box>
 						<TextField
@@ -98,12 +117,17 @@ export const CreateUser: React.FC = () => {
 						/>
 					</Box>
 					<Box marginTop={2}>
-						<InputLabel id="demo-simple-select-label">Age</InputLabel>
+						<InputLabel id="demo-simple-select-label">Role</InputLabel>
 						<Select
 							labelId="demo-simple-select-label"
 							id="demo-simple-select"
+							name="role"
 							value={role}
-							onChange={(e) => console.log(e)}
+							onChange={(e) => {
+								if (e && e.target) {
+									setRole(Number(e.target.value));
+								}
+							}}
 							// onChange={(e) => setRole(+e.target.value)}
 						>
 							{Object.keys(UserRoles).map((key) => {
@@ -121,12 +145,37 @@ export const CreateUser: React.FC = () => {
 							size="large"
 							color="primary"
 							variant="contained"
-							onClick={() => console.log('Create')}
+							onClick={async () => {
+								try {
+									await createUser({
+										variables: {
+											options: {
+												email: form[field4].value,
+												role,
+												firstName: form[field1].value,
+												lastName: form[field2].value,
+												password: form[field3].value,
+											},
+										},
+									});
+									setGoToUsers(true);
+								} catch (e) {
+									console.log(e);
+									setShowModal(true);
+								}
+							}}
 						>
 							Create
 						</Button>
 					</Box>
 				</form>
+				{loading ? <Loader /> : null}
+				{showModal ? (
+					<ErrorModal
+						handleClose={() => setShowModal(false)}
+						body={<p>{JSON.stringify(error)}</p>}
+					/>
+				) : null}
 			</Card>
 		</>
 	);
