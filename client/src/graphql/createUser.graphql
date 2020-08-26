@@ -1,0 +1,16 @@
+input UserInput {
+	firstName: String!
+	lastName: String!
+	email: String!
+	password: String!
+	role: Int!
+}
+mutation createUser($options: UserInput!) {
+	createUser(options: $options) {
+		id
+		firstName
+		lastName
+		role
+		password
+	}
+}
