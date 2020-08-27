@@ -37,12 +37,18 @@ export type User = {
 export type Mutation = {
   __typename?: 'Mutation';
   createUser: User;
+  removeUser: RemoveUserResp;
   login: LoginResponse;
 };
 
 
 export type MutationCreateUserArgs = {
   options: UserInput;
+};
+
+
+export type MutationRemoveUserArgs = {
+  id: Scalars['Float'];
 };
 
 
@@ -56,6 +62,18 @@ export type UserInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   role: Scalars['Int'];
+};
+
+export type RemoveUserResp = {
+  __typename?: 'RemoveUserResp';
+  errors?: Maybe<Array<ErrorField>>;
+  success: Scalars['Boolean'];
+};
+
+export type ErrorField = {
+  __typename?: 'ErrorField';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type LoginResponse = {
@@ -119,6 +137,23 @@ export type LoginMutation = (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'role'>
     ) }
+  ) }
+);
+
+export type RemoveUserMutationVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type RemoveUserMutation = (
+  { __typename?: 'Mutation' }
+  & { removeUser: (
+    { __typename?: 'RemoveUserResp' }
+    & Pick<RemoveUserResp, 'success'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'ErrorField' }
+      & Pick<ErrorField, 'field' | 'message'>
+    )>> }
   ) }
 );
 
@@ -271,3 +306,39 @@ export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOpti
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
 export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const RemoveUserDocument = gql`
+    mutation RemoveUser($id: Float!) {
+  removeUser(id: $id) {
+    success
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type RemoveUserMutationFn = ApolloReactCommon.MutationFunction<RemoveUserMutation, RemoveUserMutationVariables>;
+
+/**
+ * __useRemoveUserMutation__
+ *
+ * To run a mutation, you first call `useRemoveUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeUserMutation, { data, loading, error }] = useRemoveUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveUserMutation, RemoveUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveUserMutation, RemoveUserMutationVariables>(RemoveUserDocument, baseOptions);
+      }
+export type RemoveUserMutationHookResult = ReturnType<typeof useRemoveUserMutation>;
+export type RemoveUserMutationResult = ApolloReactCommon.MutationResult<RemoveUserMutation>;
+export type RemoveUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveUserMutation, RemoveUserMutationVariables>;

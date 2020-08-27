@@ -1,4 +1,5 @@
 import React from 'react';
+import DeleteIcon from '@material-ui/icons/Delete';
 import {
 	Breadcrumbs,
 	Typography,
@@ -11,9 +12,14 @@ import {
 	TableBody,
 	TableContainer,
 	Paper,
+	IconButton,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { useGetUsersQuery, useUserQuery } from '../generated/graphql';
+import {
+	useGetUsersQuery,
+	useUserQuery,
+	useRemoveUserMutation,
+} from '../generated/graphql';
 import { UserRoles, IUserRoleGroup } from '../utils/helpers';
 import { routePath } from '../utils/routePath';
 
@@ -27,6 +33,7 @@ export const Home = () => {
 	} = useGetUsersQuery();
 
 	const { data: userData } = useUserQuery();
+	const [removeUser] = useRemoveUserMutation();
 
 	let tableRows: (JSX.Element | null)[] | JSX.Element = (
 		<TableRow>
@@ -58,18 +65,32 @@ export const Home = () => {
 			if (userData?.user?.id === user.id) return null;
 			return (
 				<TableRow key={user.id}>
-					<TableCell component="th" scope="row">
+					<TableCell component="td" scope="row">
 						<Typography color="textSecondary">{user.id}</Typography>
 					</TableCell>
-					<TableCell component="th" scope="row">
+					<TableCell component="td" scope="row">
 						<Typography color="textSecondary">
 							{user.firstName} {user.lastName}
 						</Typography>
 					</TableCell>
-					<TableCell component="th" scope="row">
+					<TableCell component="td" scope="row">
 						<Typography color="textPrimary">
 							{UserRoles[user.role as keyof IUserRoleGroup].name}
 						</Typography>
+					</TableCell>
+					<TableCell component="td" scope="row" align="right">
+						<IconButton
+							color="secondary"
+							onClick={() =>
+								removeUser({
+									variables: {
+										id: user.id,
+									},
+								})
+							}
+						>
+							<DeleteIcon style={{ fontSize: 17 }} />
+						</IconButton>
 					</TableCell>
 				</TableRow>
 			);
@@ -98,9 +119,16 @@ export const Home = () => {
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell align="left">Id</TableCell>
-							<TableCell align="left">User name</TableCell>
-							<TableCell align="left">User role</TableCell>
+							<TableCell component="th" align="left">
+								Id
+							</TableCell>
+							<TableCell component="th" align="left">
+								User name
+							</TableCell>
+							<TableCell component="th" align="left">
+								User role
+							</TableCell>
+							<TableCell component="th" align="right" />
 						</TableRow>
 					</TableHead>
 					<TableBody>{tableRows}</TableBody>
