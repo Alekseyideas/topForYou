@@ -1,0 +1,9 @@
+mutation RemoveUser($id: Float!) {
+	removeUser(id: $id) {
+		success
+		errors {
+			field
+			message
+		}
+	}
+}

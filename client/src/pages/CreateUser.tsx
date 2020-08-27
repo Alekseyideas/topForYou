@@ -17,7 +17,11 @@ import { NavLink, Redirect } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
 import { UserRoles } from '../utils/helpers';
 import { Loader, ErrorModal } from '../components';
-import { useCreateUserMutation } from '../generated/graphql';
+import {
+	useCreateUserMutation,
+	GetUsersQuery,
+	GetUsersDocument,
+} from '../generated/graphql';
 import { routePath } from '../utils/routePath';
 
 const field1 = 'name';
@@ -156,6 +160,25 @@ export const CreateUser: React.FC = () => {
 												lastName: form[field2].value,
 												password: form[field3].value,
 											},
+										},
+										update: (store, { data }) => {
+											console.log('data: ', data);
+											// console.log('store: ', store);
+											if (!data) return null;
+											const queryData = store.readQuery<GetUsersQuery>({
+												query: GetUsersDocument,
+											});
+											const users =
+												queryData && queryData.users && queryData.users[0]
+													? [...queryData.users, data.createUser]
+													: [data.createUser];
+											return store.writeQuery<GetUsersQuery>({
+												query: GetUsersDocument,
+												data: {
+													__typename: 'Query',
+													users,
+												},
+											});
 										},
 									});
 									setGoToUsers(true);

@@ -24,6 +24,13 @@ import { MyContext } from '../utils/MyContext';
 import { verify } from 'jsonwebtoken';
 
 @ObjectType()
+class ErrorField {
+  @Field()
+  field!: string;
+  @Field()
+  message!: string;
+}
+@ObjectType()
 class LoginResponse {
   @Field()
   accessToken!: string;
@@ -31,6 +38,14 @@ class LoginResponse {
   refreshToken!: string;
   @Field()
   user!: User;
+}
+
+@ObjectType()
+class RemoveUserResp {
+  @Field(() => [ErrorField], { nullable: true })
+  errors?: ErrorField[];
+  @Field()
+  success!: boolean;
 }
 
 @Resolver()
@@ -89,6 +104,42 @@ export class UserResolver {
     }
   }
 
+  @Mutation(() => RemoveUserResp)
+  // @UseMiddleware(isAuth)
+  async removeUser(@Arg('id') id: number): Promise<RemoveUserResp> {
+    if (!id)
+      return {
+        success: false,
+        errors: [
+          {
+            field: 'id',
+            message: 'id is required',
+          },
+        ],
+      };
+    try {
+      await User.destroy({
+        where: {
+          id,
+        },
+      });
+    } catch (e) {
+      console.log('e: ', e);
+      return {
+        success: false,
+        errors: [
+          {
+            field: 'Some error',
+            message: e.message,
+          },
+        ],
+      };
+    }
+
+    return {
+      success: true,
+    };
+  }
   @Mutation(() => LoginResponse)
   async login(
     @Arg('options', () => UserLoginInput) options: UserLoginInput,
