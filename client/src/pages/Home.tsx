@@ -19,12 +19,13 @@ import {
 	useGetUsersQuery,
 	useUserQuery,
 	useRemoveUserMutation,
+	GetUsersQuery,
+	GetUsersDocument,
 } from '../generated/graphql';
 import { UserRoles, IUserRoleGroup } from '../utils/helpers';
 import { routePath } from '../utils/routePath';
 
 export const Home = () => {
-	// const theme = useTheme();
 	const history = useHistory();
 	const {
 		data: usersData,
@@ -34,6 +35,31 @@ export const Home = () => {
 
 	const { data: userData } = useUserQuery();
 	const [removeUser] = useRemoveUserMutation();
+
+	const removeHandler = (data: { id: number }) => {
+		const { id } = data;
+		removeUser({
+			variables: {
+				id,
+			},
+			update: (store) => {
+				const queryData = store.readQuery<GetUsersQuery>({
+					query: GetUsersDocument,
+				});
+				const users =
+					queryData && queryData.users && queryData.users[0]
+						? queryData.users.filter((us) => us.id !== id)
+						: [];
+				return store.writeQuery<GetUsersQuery>({
+					query: GetUsersDocument,
+					data: {
+						__typename: 'Query',
+						users,
+					},
+				});
+			},
+		});
+	};
 
 	let tableRows: (JSX.Element | null)[] | JSX.Element = (
 		<TableRow>
@@ -81,13 +107,7 @@ export const Home = () => {
 					<TableCell component="td" scope="row" align="right">
 						<IconButton
 							color="secondary"
-							onClick={() =>
-								removeUser({
-									variables: {
-										id: user.id,
-									},
-								})
-							}
+							onClick={() => removeHandler({ id: user.id })}
 						>
 							<DeleteIcon style={{ fontSize: 17 }} />
 						</IconButton>

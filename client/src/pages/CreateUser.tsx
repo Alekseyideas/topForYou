@@ -7,11 +7,11 @@ import {
 	TextField,
 	Box,
 	Button,
-	FormControl,
+	// FormControl,
 	InputLabel,
 	Select,
 	MenuItem,
-	CircularProgress,
+	// CircularProgress,
 } from '@material-ui/core';
 import { NavLink, Redirect } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
@@ -21,6 +21,7 @@ import {
 	useCreateUserMutation,
 	GetUsersQuery,
 	GetUsersDocument,
+	useGetUsersQuery,
 } from '../generated/graphql';
 import { routePath } from '../utils/routePath';
 
@@ -30,6 +31,7 @@ const field3 = 'pass';
 const field4 = 'email';
 export const CreateUser: React.FC = () => {
 	const [createUser, { loading, error }] = useCreateUserMutation();
+	useGetUsersQuery();
 	const [showModal, setShowModal] = React.useState(false);
 	const [goToUsers, setGoToUsers] = React.useState(false);
 	const { form, onChangeHandler } = useForm({
@@ -47,9 +49,9 @@ export const CreateUser: React.FC = () => {
 		},
 	});
 
-	React.useEffect(() => {
-		console.log(error, 'error');
-	}, [error]);
+	// React.useEffect(() => {
+	// 	console.log(error, 'error');
+	// }, [error]);
 
 	const [role, setRole] = React.useState(1);
 
@@ -162,8 +164,6 @@ export const CreateUser: React.FC = () => {
 											},
 										},
 										update: (store, { data }) => {
-											console.log('data: ', data);
-											// console.log('store: ', store);
 											if (!data) return null;
 											const queryData = store.readQuery<GetUsersQuery>({
 												query: GetUsersDocument,
