@@ -46,15 +46,17 @@ export const Home = () => {
 				const queryData = store.readQuery<GetUsersQuery>({
 					query: GetUsersDocument,
 				});
-				const users =
-					queryData && queryData.users && queryData.users[0]
-						? queryData.users.filter((us) => us.id !== id)
-						: [];
+				const users = queryData?.users?.data
+					? queryData.users.data.filter((us) => us.id !== id)
+					: [];
 				return store.writeQuery<GetUsersQuery>({
 					query: GetUsersDocument,
 					data: {
 						__typename: 'Query',
-						users,
+						users: {
+							data: users,
+							success: true,
+						},
 					},
 				});
 			},
@@ -86,8 +88,8 @@ export const Home = () => {
 			</TableRow>
 		);
 	}
-	if (usersData?.users[0] && userData && userData.user) {
-		tableRows = usersData.users.map((user) => {
+	if (usersData?.users.data && userData?.user?.id) {
+		tableRows = usersData.users.data.map((user) => {
 			if (userData?.user?.id === user.id) return null;
 			return (
 				<TableRow key={user.id}>

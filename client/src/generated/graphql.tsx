@@ -17,8 +17,21 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
-  users: Array<User>;
+  users: UsersResp;
   user?: Maybe<User>;
+};
+
+export type UsersResp = {
+  __typename?: 'UsersResp';
+  errors?: Maybe<Array<ErrorField>>;
+  success: Scalars['Boolean'];
+  data?: Maybe<Array<User>>;
+};
+
+export type ErrorField = {
+  __typename?: 'ErrorField';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type User = {
@@ -36,7 +49,7 @@ export type User = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createUser: User;
+  createUser: UserResp;
   removeUser: RemoveUserResp;
   login: LoginResponse;
 };
@@ -56,6 +69,13 @@ export type MutationLoginArgs = {
   options: UserLoginInput;
 };
 
+export type UserResp = {
+  __typename?: 'UserResp';
+  errors?: Maybe<Array<ErrorField>>;
+  success: Scalars['Boolean'];
+  user?: Maybe<User>;
+};
+
 export type UserInput = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
@@ -68,12 +88,6 @@ export type RemoveUserResp = {
   __typename?: 'RemoveUserResp';
   errors?: Maybe<Array<ErrorField>>;
   success: Scalars['Boolean'];
-};
-
-export type ErrorField = {
-  __typename?: 'ErrorField';
-  field: Scalars['String'];
-  message: Scalars['String'];
 };
 
 export type LoginResponse = {
@@ -96,8 +110,15 @@ export type CreateUserMutationVariables = Exact<{
 export type CreateUserMutation = (
   { __typename?: 'Mutation' }
   & { createUser: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'firstName' | 'lastName' | 'role' | 'password'>
+    { __typename?: 'UserResp' }
+    & Pick<UserResp, 'success'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'email' | 'role' | 'lastName' | 'updatedAt' | 'createdAt'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorField' }
+      & Pick<ErrorField, 'field' | 'message'>
+    )>> }
   ) }
 );
 
@@ -117,10 +138,17 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersQuery = (
   { __typename?: 'Query' }
-  & { users: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'firstName' | 'lastName' | 'password' | 'role'>
-  )> }
+  & { users: (
+    { __typename?: 'UsersResp' }
+    & Pick<UsersResp, 'success'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'firstName' | 'lastName' | 'password' | 'role'>
+    )>>, errors?: Maybe<Array<(
+      { __typename?: 'ErrorField' }
+      & Pick<ErrorField, 'field' | 'message'>
+    )>> }
+  ) }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -161,11 +189,19 @@ export type RemoveUserMutation = (
 export const CreateUserDocument = gql`
     mutation createUser($options: UserInput!) {
   createUser(options: $options) {
-    id
-    firstName
-    lastName
-    role
-    password
+    success
+    user {
+      id
+      email
+      role
+      lastName
+      updatedAt
+      createdAt
+    }
+    errors {
+      field
+      message
+    }
   }
 }
     `;
@@ -231,13 +267,20 @@ export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
 export const GetUsersDocument = gql`
-    query GetUsers {
+    query getUsers {
   users {
-    id
-    firstName
-    lastName
-    password
-    role
+    success
+    data {
+      id
+      firstName
+      lastName
+      password
+      role
+    }
+    errors {
+      field
+      message
+    }
   }
 }
     `;

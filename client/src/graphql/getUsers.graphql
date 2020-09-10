@@ -1,9 +1,16 @@
-query GetUsers {
+query getUsers {
 	users {
-		id
-		firstName
-		lastName
-		password
-		role
+		success
+		data {
+			id
+			firstName
+			lastName
+			password
+			role
+		}
+		errors {
+			field
+			message
+		}
 	}
 }

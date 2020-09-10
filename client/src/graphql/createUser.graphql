@@ -1,16 +1,33 @@
-input UserInput {
-	firstName: String!
-	lastName: String!
-	email: String!
-	password: String!
-	role: Int!
-}
+# input UserInput {
+# 	firstName: String!
+# 	lastName: String!
+# 	email: String!
+# 	password: String!
+# 	role: Int!
+# }
+# mutation createUser($options: UserInput!) {
+# 	createUser(options: $options) {
+# 		id
+# 		firstName
+# 		lastName
+# 		role
+# 		password
+# 	}
+# }
 mutation createUser($options: UserInput!) {
 	createUser(options: $options) {
-		id
-		firstName
-		lastName
-		role
-		password
+		success
+		user {
+			id
+			email
+			role
+			lastName
+			updatedAt
+			createdAt
+		}
+		errors {
+			field
+			message
+		}
 	}
 }

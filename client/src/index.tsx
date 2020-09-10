@@ -20,6 +20,9 @@ import { AuthLink } from './utils/AuthLink';
 
 const theme = unstable_createMuiStrictModeTheme({
 	palette: {
+		primary: {
+			main: '#3f74b5',
+		},
 		// type: 'dark',
 	},
 });
