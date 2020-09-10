@@ -7,11 +7,11 @@ import {
 	TextField,
 	Box,
 	Button,
-	FormControl,
+	// FormControl,
 	InputLabel,
 	Select,
 	MenuItem,
-	CircularProgress,
+	// CircularProgress,
 } from '@material-ui/core';
 import { NavLink, Redirect } from 'react-router-dom';
 import { useForm } from '../hooks/useForm';
@@ -21,6 +21,7 @@ import {
 	useCreateUserMutation,
 	GetUsersQuery,
 	GetUsersDocument,
+	useGetUsersQuery,
 } from '../generated/graphql';
 import { routePath } from '../utils/routePath';
 
@@ -29,7 +30,8 @@ const field2 = 'lastName';
 const field3 = 'pass';
 const field4 = 'email';
 export const CreateUser: React.FC = () => {
-	const [createUser, { loading, error }] = useCreateUserMutation();
+	const [createUser, { loading, error, data }] = useCreateUserMutation();
+	useGetUsersQuery();
 	const [showModal, setShowModal] = React.useState(false);
 	const [goToUsers, setGoToUsers] = React.useState(false);
 	const { form, onChangeHandler } = useForm({
@@ -47,13 +49,27 @@ export const CreateUser: React.FC = () => {
 		},
 	});
 
-	React.useEffect(() => {
-		console.log(error, 'error');
-	}, [error]);
+	// React.useEffect(() => {
+	// 	console.log(error, 'error');
+	// }, [error]);
 
 	const [role, setRole] = React.useState(1);
 
 	if (goToUsers) return <Redirect to={routePath.home} />;
+
+	const errors = () => {
+		if (data?.createUser.errors) {
+			return data.createUser.errors.map((itm) => {
+				return (
+					<div key={itm.field}>
+						<h4> {itm.field} </h4>
+						<p> {itm.message} </p>
+					</div>
+				);
+			});
+		}
+		return <p>Some Error</p>;
+	};
 	return (
 		<>
 			<Breadcrumbs aria-label="breadcrumb">
@@ -151,7 +167,7 @@ export const CreateUser: React.FC = () => {
 							variant="contained"
 							onClick={async () => {
 								try {
-									await createUser({
+									const resp = await createUser({
 										variables: {
 											options: {
 												email: form[field4].value,
@@ -162,26 +178,32 @@ export const CreateUser: React.FC = () => {
 											},
 										},
 										update: (store, { data }) => {
-											console.log('data: ', data);
-											// console.log('store: ', store);
 											if (!data) return null;
 											const queryData = store.readQuery<GetUsersQuery>({
 												query: GetUsersDocument,
 											});
-											const users =
-												queryData && queryData.users && queryData.users[0]
-													? [...queryData.users, data.createUser]
-													: [data.createUser];
-											return store.writeQuery<GetUsersQuery>({
-												query: GetUsersDocument,
-												data: {
-													__typename: 'Query',
-													users,
-												},
-											});
+											if (!data.createUser.success && !data.createUser.user)
+												return setShowModal(true);
+											const users = queryData?.users.data
+												? [...queryData.users.data, data.createUser.user]
+												: [data.createUser];
+											if (users) {
+												console.log('users: ', users);
+												return store.writeQuery<GetUsersQuery>({
+													query: GetUsersDocument,
+													data: {
+														__typename: 'Query',
+														users: {
+															data: [],
+															success: true,
+														},
+													},
+												});
+											}
 										},
 									});
-									setGoToUsers(true);
+									if (resp.data?.createUser.success) setGoToUsers(true);
+									else setShowModal(true);
 								} catch (e) {
 									console.log(e);
 									setShowModal(true);
@@ -196,7 +218,7 @@ export const CreateUser: React.FC = () => {
 				{showModal ? (
 					<ErrorModal
 						handleClose={() => setShowModal(false)}
-						body={<p>{JSON.stringify(error)}</p>}
+						body={<>{errors()}</>}
 					/>
 				) : null}
 			</Card>

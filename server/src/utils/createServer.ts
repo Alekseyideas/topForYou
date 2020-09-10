@@ -1,7 +1,7 @@
 import { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
-import { UserResolver } from '../resolvers/User';
+import { UserResolver } from '../resolvers/global/User';
 
 export default async function createServer(app: Application) {
   const server = new ApolloServer({
